@@ -5,6 +5,7 @@ const deps = require("../package.json").dependencies;
 const prodConfig = {
   mode: "production",
   output: {
+    publicPath: "/marketing/latest/",
     filename: "[name].[contenthash].js"
   },
   plugins: [
