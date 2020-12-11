@@ -1,28 +1,23 @@
-// const path = require("path");
+const { merge } = require("webpack-merge");
+const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPlugin");
+const deps = require("../package.json").dependencies;
 
-module.exports = {
-  // entry: "./src/index.js",
-  // output: {
-  //   path: path.join(__dirname, "/dist"),
-  //   filename: "index_bundle.js"
-  // },
-  module: {
-    rules: [
-      {
-        test: /\.m?js$/,
-        exclude: /node_modules/,
-        use: {
-          loader: "babel-loader",
-          options: {
-            presets: ["@babel/preset-env", "@babel/preset-react"],
-            plugins: ["@babel/pligin-transform-runtime"]
-          }
-        }
-      }
-      // {
-      //   test: /\.css$/,
-      //   use: ["style-loader", "css-loader"]
-      // }
-    ]
-  }
+const domain = process.env.PRODUCTION_DOMAIN;
+
+const prodConfig = {
+  mode: "production",
+  output: {
+    filename: "[name].[contenthash].js"
+  },
+  plugins: [
+    new ModuleFederationPlugin({
+      name: "shell",
+      remotes: {
+        appMarketing: `marketing@${domain}/marketing/remoteEntry.js`
+      },
+      shared: { ...deps }
+    })
+  ]
 };
+
+module.exports = merge(commonConfig, prodConfig);
